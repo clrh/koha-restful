@@ -97,9 +97,9 @@ sub rm_get_biblio_items_holdable_status {
     }
 
     my $response = {};
-    my $itemnumbers = C4::Items::GetItemnumbersForBiblio($biblionumber);
-    if ($itemnumbers) {
-        foreach my $itemnumber (@$itemnumbers) {
+    my $itemnumbers = C4::Items::get_itemnumbers_of($biblionumber);
+    if ($itemnumbers->{$biblionumber}) {
+        foreach my $itemnumber (@{ $itemnumbers->{$biblionumber} }) {
             my $can_reserve;
             if ($borrowernumber) {
                 $can_reserve = C4::Reserves::CanItemBeReserved($borrowernumber, $itemnumber);
