@@ -25,9 +25,9 @@ sub rm_get_biblio_items {
     my $biblionumber = $self->param('biblionumber');
 
     my $response = [];
-    my $itemnumbers = C4::Items::GetItemnumbersForBiblio($biblionumber);
-    if ($itemnumbers) {
-        foreach my $itemnumber (@$itemnumbers) {
+    my $itemnumbers = C4::Items::get_itemnumbers_of($biblionumber);
+    if ($itemnumbers->{$biblionumber}) {
+        foreach my $itemnumber (@{ $itemnumbers->{$biblionumber} }) {
             my $item = C4::Items::GetItem($itemnumber);
             my $holdingbranchname = C4::Branch::GetBranchName($item->{holdingbranch});
             my $homebranchname = C4::Branch::GetBranchName($item->{homebranch});
