@@ -6,7 +6,7 @@ use Test::MockModule;
 use Test::WWW::Mechanize::CGIApp;
 
 use Koha::REST::User;
-use Koha::DateUtils;
+use DateTime::Format::DateParse;
 use JSON;
 
 my $c4_items_module = new Test::MockModule('C4::Items');
@@ -170,15 +170,15 @@ BEGIN {
                 borrowernumber => 1,
                 branchcode => 'B1',
                 itemnumber => 1,
-                date_due => dt_from_string('2012-01-07', 'iso'),
-                issuedate => dt_from_string('2012-01-01', 'iso'),
+                date_due => DateTime::Format::DateParse->parse_datetime('2012-01-07'),
+                issuedate => DateTime::Format::DateParse->parse_datetime('2012-01-01'),
                 biblionumber => 1,
             }, {
                 borrowernumber => 1,
                 branchcode => 'B2',
                 itemnumber => 2,
-                date_due => dt_from_string('2012-04-28', 'iso'),
-                issuedate => dt_from_string('2012-04-14', 'iso'),
+                date_due => DateTime::Format::DateParse->parse_datetime('2012-04-28'),
+                issuedate => DateTime::Format::DateParse->parse_datetime('2012-04-14'),
                 biblionumber => 1,
             },
         ],
