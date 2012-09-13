@@ -1,9 +1,9 @@
-package Koha::RESTApplication::User;
+package Koha::REST::User;
 
 use base 'CGI::Application';
 use Modern::Perl;
 
-use Koha::RESTApplication::Response qw(format_response response_boolean);
+use Koha::REST::Response qw(format_response response_boolean);
 use C4::Reserves;
 use C4::Circulation;
 use C4::Biblio;

@@ -1,9 +1,9 @@
-package Koha::RESTApplication::Auth;
+package Koha::REST::Auth;
 
 use base 'CGI::Application';
 use Modern::Perl;
 
-use Koha::RESTApplication::Response qw(format_response response_boolean format_error);
+use Koha::REST::Response qw(format_response response_boolean format_error);
 use C4::Auth;
 use C4::Members;
 

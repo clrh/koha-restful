@@ -1,4 +1,4 @@
-package Koha::RESTApplication::Response;
+package Koha::REST::Response;
 
 use Modern::Perl;
 use Exporter 'import';

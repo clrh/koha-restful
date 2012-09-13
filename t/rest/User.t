@@ -5,7 +5,7 @@ use Test::More tests => 48;
 use Test::MockModule;
 use Test::WWW::Mechanize::CGIApp;
 
-use Koha::RESTApplication::User;
+use Koha::REST::User;
 use Koha::DateUtils;
 use JSON;
 
@@ -35,7 +35,7 @@ my (%items_by_itemnumber, %branchnames_by_branchcode, %borrowers_by_username,
 # Tests
 
 my $mech = Test::WWW::Mechanize::CGIApp->new;
-$mech->app('Koha::RESTApplication::Dispatch');
+$mech->app('Koha::REST::Dispatch');
 
 ## /user/:user_name/holds
 

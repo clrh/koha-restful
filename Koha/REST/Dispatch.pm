@@ -1,4 +1,4 @@
-package Koha::RESTApplication::Dispatch;
+package Koha::REST::Dispatch;
 
 use C4::Context;
 
@@ -6,11 +6,11 @@ use base 'CGI::Application::Dispatch';
 
 sub dispatch_args {
     return {
-        prefix => 'Koha::RESTApplication',
+        prefix => 'Koha::REST',
 
         # Each entry in the table below correspond to an application and a run
-        # mode. An application is a Perl module in Koha::RESTApplication. For
-        # example, { app => 'User' } correspond to Koha::RESTApplication::User.
+        # mode. An application is a Perl module in Koha::REST. For
+        # example, { app => 'User' } correspond to Koha::REST::User.
         # Run modes are described in corresponding Perl module.
         #
         # Notes for building new paths:

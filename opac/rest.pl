@@ -18,7 +18,7 @@ if ( !@AuthorizedIPs # If no filter set, allow access to no one!
     ) {
     CGI::Application::Dispatch->dispatch(
         debug => 1,
-        prefix => 'Koha::RESTApplication',
+        prefix => 'Koha::REST',
         table => [
             '*' => { app => 'Auth', rm => 'forbidden' },
             '/' => { app => 'Auth', rm => 'forbidden' },
@@ -28,9 +28,9 @@ if ( !@AuthorizedIPs # If no filter set, allow access to no one!
 }
 
 
-use Koha::RESTApplication::Dispatch;
+use Koha::REST::Dispatch;
 
-Koha::RESTApplication::Dispatch->dispatch(
+Koha::REST::Dispatch->dispatch(
     debug => 1,
 );
 

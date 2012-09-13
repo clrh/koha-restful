@@ -5,7 +5,7 @@ use Test::More tests => 80;
 use Test::MockModule;
 use Test::WWW::Mechanize::CGIApp;
 
-use Koha::RESTApplication::Catalogue;
+use Koha::REST::Catalogue;
 use JSON;
 
 my $c4_items_module = new Test::MockModule('C4::Items');
@@ -29,7 +29,7 @@ my (%itemnumbers_by_biblionumber, %items_by_itemnumber,
 # Tests
 
 my $mech = Test::WWW::Mechanize::CGIApp->new;
-$mech->app('Koha::RESTApplication::Dispatch');
+$mech->app('Koha::REST::Dispatch');
 
 ## /biblio/:biblionumber/items
 
