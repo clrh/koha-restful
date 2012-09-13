@@ -128,7 +128,7 @@ sub rm_item_is_holdable {
 
     my $can_reserve;
     if ($borrowernumber) {
-        $can_reserve = CanItemBeReserved($borrowernumber, $itemnumber);
+        $can_reserve = C4::Reserves::CanItemBeReserved($borrowernumber, $itemnumber);
     } else {
         $can_reserve = 0;
     }
