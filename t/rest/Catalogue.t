@@ -13,8 +13,8 @@ my $c4_branch_module = new Test::MockModule('C4::Branch');
 my $c4_reserves_module = new Test::MockModule('C4::Reserves');
 my $c4_members_module = new Test::MockModule('C4::Members');
 
-$c4_items_module->mock('GetItemnumbersForBiblio',
-    \&mock_c4_items_GetItemnumbersForBiblio);
+$c4_items_module->mock('get_itemnumbers_of',
+    \&mock_c4_items_get_itemnumbers_of);
 $c4_items_module->mock('GetItem', \&mock_c4_items_GetItem);
 $c4_branch_module->mock('GetBranchName', \&mock_c4_branch_GetBranchName);
 $c4_reserves_module->mock('CanBookBeReserved', \&mock_c4_reserves_CanBookBeReserved);
@@ -126,10 +126,12 @@ BEGIN {
     );
 }
 
-sub mock_c4_items_GetItemnumbersForBiblio {
+sub mock_c4_items_get_itemnumbers_of {
     my ($biblionumber) = @_;
 
-    return $itemnumbers_by_biblionumber{$biblionumber};
+    return {
+        $biblionumber => $itemnumbers_by_biblionumber{$biblionumber}
+    };
 }
 
 BEGIN {
