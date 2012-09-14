@@ -293,8 +293,11 @@ Optional parameters:
 
 =over 2
 
-=item * user_name: Patron username. It is optional but highly recommended. If
-not given, all items will be marked as not holdable.
+=item * borrowernumber: Patron borrowernumber. It is optional but highly
+recommended. If not given, all items will be marked as not holdable.
+
+=item * user_name: Patron username. Only used to find borrowernumber if this one
+is not given.
 
 =back
 

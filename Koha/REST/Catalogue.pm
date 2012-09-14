@@ -89,11 +89,13 @@ sub rm_get_biblio_items_holdable_status {
     my $biblionumber = $self->param('biblionumber');
 
     my $q = $self->query();
-    my $borrowernumber;
-    my $user_name = $q->param('user_name');
-    if ($user_name) {
-        my $borrower = C4::Members::GetMember(userid => $user_name);
-        $borrowernumber = $borrower->{borrowernumber} if $borrower;
+    my $borrowernumber = $q->param('borrowernumber');
+    unless ($borrowernumber) {
+        my $user_name = $q->param('user_name');
+        if ($user_name) {
+            my $borrower = C4::Members::GetMember(userid => $user_name);
+            $borrowernumber = $borrower->{borrowernumber} if $borrower;
+        }
     }
 
     my $response = {};
