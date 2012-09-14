@@ -13,21 +13,50 @@ use C4::Branch;
 sub setup {
     my $self = shift;
     $self->run_modes(
+        get_holds_byid => 'rm_get_holds_byid',
         get_holds => 'rm_get_holds',
+        get_issues_byid => 'rm_get_issues_byid',
         get_issues => 'rm_get_issues',
     );
 }
 
-# return current holds of a koha patron
+sub rm_get_holds_byid {
+    my $self = shift;
+    my $borrowernumber = $self->param('borrowernumber');
+
+    return format_response($self, get_holds($borrowernumber));
+}
+
 sub rm_get_holds {
     my $self = shift;
     my $user_name = $self->param('user_name');
-
     my $borrower = C4::Members::GetMember(userid => $user_name);
     my $borrowernumber = $borrower->{borrowernumber};
-    unless ($borrowernumber) {
-        return format_response($self, []);
-    }
+
+    return format_response($self, get_holds($borrowernumber));
+}
+
+sub rm_get_issues_byid {
+    my $self = shift;
+    my $borrowernumber = $self->param('borrowernumber');
+
+    return format_response($self, get_issues($borrowernumber));
+}
+
+sub rm_get_issues {
+    my $self = shift;
+    my $user_name = $self->param('user_name');
+    my $borrower = C4::Members::GetMember(userid => $user_name);
+    my $borrowernumber = $borrower->{borrowernumber};
+
+    return format_response($self, get_issues($borrowernumber));
+}
+
+
+# return current holds of a koha patron
+sub get_holds {
+    my ($borrowernumber) = @_;
+    return [] unless ($borrowernumber);
 
     my $response = [];
     my @holds = C4::Reserves::GetReservesFromBorrowernumber($borrowernumber);
@@ -49,19 +78,13 @@ sub rm_get_holds {
         };
     }
 
-    return format_response($self, $response);
+    return $response;
 }
 
 # return current issues of a koha patron
-sub rm_get_issues {
-    my $self = shift;
-    my $user_name = $self->param('user_name');
-
-    my $borrower = C4::Members::GetMember(userid => $user_name);
-    my $borrowernumber = $borrower->{borrowernumber};
-    unless ($borrowernumber) {
-        return format_response($self, []);
-    }
+sub get_issues {
+    my ($borrowernumber) = @_;
+    return [] unless ($borrowernumber);
 
     my $response = [];
     my $issues = C4::Members::GetPendingIssues($borrowernumber);
@@ -90,8 +113,7 @@ sub rm_get_issues {
         };
     }
 
-    return format_response($self, $response);
+    return $response;
 }
-
 
 1;

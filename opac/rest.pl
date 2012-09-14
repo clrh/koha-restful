@@ -48,6 +48,61 @@ This script provide a RESTful webservice to interact with Koha.
 
 =head2 User
 
+=head3 GET user/byid/:borrowernumber/holds
+
+=over 2
+
+Get holds of a user, given his id.
+
+Required parameters:
+
+=over 2
+
+=item * borrowernumber: Patron id.
+
+=back
+
+Response:
+
+=over 2
+
+a JSON array that contains holds. Each hold is described by a hash with the
+following keys:
+
+=over 2
+
+=item * hold_id: internal hold identifier.
+
+=item * rank: position of the patron in reserve queue.
+
+=item * reservedate: date of reservation.
+
+=item * biblionumber: internal biblio identifier.
+
+=item * title: title of bibliographic record.
+
+=item * branchcode: pickup library code.
+
+=item * branchname: pickup library name.
+
+=item * found: 'W' if item is awaiting for pickup.
+
+=back
+
+If reserve is at item level, there are two additional keys:
+
+=over 2
+
+=item * itemnumber: internal item identifier.
+
+=item * barcode: barcode of item.
+
+=back
+
+=back
+
+=back
+
 =head3 GET user/:user_name/holds
 
 =over 2
@@ -96,6 +151,69 @@ If reserve is at item level, there are two additional keys:
 =item * itemnumber: internal item identifier.
 
 =item * barcode: barcode of item.
+
+=back
+
+=back
+
+=back
+
+=head3 GET user/byid/:borrowernumber/issues
+
+=over 2
+
+Get issues of a user, given his id.
+
+Required parameters:
+
+=over 2
+
+=item * borrowernumber: Patron id.
+
+=back
+
+Response:
+
+=over 2
+
+a JSON array that contains issues. Each issue is described by a hash with the
+following keys:
+
+=over 2
+
+=item * borrowernumber: internal patron identifier.
+
+=item * biblionumber: internal biblio identifier.
+
+=item * title: title of bibliographic record.
+
+=item * itemnumber: internal item identifier.
+
+=item * barcode: barcode of item.
+
+=item * branchcode: pickup library code.
+
+=item * issuedate: date of issue.
+
+=item * date_due: the date the item is due.
+
+=item * renewable: is the issue renewable ? (boolean)
+
+=back
+
+If the issue is not renewable, there is one additional key:
+
+=over 2
+
+=item * reasons_not_renewable: 2 possible values:
+
+=over 2
+
+=item * 'on_reserve': item is on hold.
+
+=item * 'too_many': issue was renewed too many times.
+
+=back
 
 =back
 
