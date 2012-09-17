@@ -20,6 +20,8 @@ sub dispatch_args {
         #                  this HTTP method to run the corresponding mode.
         #   Optional parameters can be omitted from the path.
         table => [
+            'informations[get]'
+                => { app => 'Infos', rm => 'informations' },
             'user/byid/:borrowernumber/holds[get]'
                 => { app => 'User', rm => 'get_holds_byid' },
             'user/:user_name/holds[get]'
