@@ -43,7 +43,7 @@ sub rm_put_password {
 # Returns a 403 Forbidden error.
 sub rm_forbidden {
     my $self = shift;
-    my $response = ["Forbidden. $ENV{'REMOTE_ADDR'} is not allowed to use this service. Are you sure syspref REST:AuthorizedIPs is correctly configured?"];
+    my $response = ["Forbidden. $ENV{'REMOTE_ADDR'} is not allowed to use this service. Are you sure configuration variable 'authorizedips' is correctly configured?"];
     return format_error($self, '403', $response);
 }
 

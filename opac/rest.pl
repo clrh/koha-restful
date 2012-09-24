@@ -5,14 +5,14 @@
 # This script provide a RESTful webservice to interact with Koha.
 
 use Modern::Perl;
+use YAML;
 use CGI::Application::Dispatch;
-use C4::Context;
 use List::MoreUtils qw(any);
 
-
+my $conf = YAML::LoadFile('../etc/rest/config.yaml');
 # First of all, let's test if the client IP is allowed to use our service
 # If the remote address is not allowed, redirect to 403
-my @AuthorizedIPs = split(/,/, C4::Context->preference('REST:AuthorizedIPs'));
+my @AuthorizedIPs = $conf->{authorizedips} ? @{ $conf->{authorizedips} } : ();
 if ( !@AuthorizedIPs # If no filter set, allow access to no one!
     or not any { $ENV{'REMOTE_ADDR'} eq $_ } @AuthorizedIPs # IP Check
     ) {
