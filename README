@@ -1,0 +1,31 @@
+Koha REST server
+================
+
+Installation notes:
+-------------------
+
+A/ If you have a tarball
+
+Simply extract files into Koha installation directory:
+
+    cd /path/to/koha
+    tar xzf koha-restful.tar.gz
+
+
+B/ If you want to install it as a git repository
+
+If Koha installation directory is not a git repository, you can just clone Koha
+REST server into it:
+
+    cd /path/to/koha
+    git clone git://git.biblibre.com/koha-restful.git .
+
+Otherwise (Koha installation directory is a git repository), you have to clone
+koha REST server in another location and then symlink files and directories into
+Koha installation directory:
+
+    ln -s /path/to/koharest/etc/rest /path/to/koha/etc/
+    ln -s /path/to/koharest/Koha/REST /path/to/koha/Koha/
+    ln -s /path/to/koharest/opac/rest.pl /path/to/koha/opac/
+
+Important note: '/path/to/koharest' must be absolute path when creating symlink.
