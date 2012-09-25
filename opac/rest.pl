@@ -46,6 +46,33 @@ This script provide a RESTful webservice to interact with Koha.
 
 =head1 SERVICES
 
+=head2 Infos
+
+=head3 GET branches
+
+=over 2
+
+Get the list of branches
+
+Response:
+
+=over 2
+
+a JSON array that contains branches. Each branch is described by a hash with the
+following keys:
+
+=over 2
+
+=item * code: internal branch identifier
+
+=item * name: branch name
+
+=back
+
+=back
+
+=back
+
 =head2 User
 
 =head3 GET user/byid/:borrowernumber/holds

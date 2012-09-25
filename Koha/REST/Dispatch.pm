@@ -22,6 +22,8 @@ sub dispatch_args {
         table => [
             'informations[get]'
                 => { app => 'Infos', rm => 'informations' },
+            'branches[get]'
+                => { app => 'Infos', rm => 'branches' },
             'user/byid/:borrowernumber/holds[get]'
                 => { app => 'User', rm => 'get_holds_byid' },
             'user/:user_name/holds[get]'
