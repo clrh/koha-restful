@@ -94,12 +94,19 @@ sub get_issues {
             my ($renewable, $error) = C4::Circulation::CanBookBeRenewed(
                 $borrowernumber, $itemnumber);
 
+            # Community master version returns DateTime objects but older
+            # versions return dates as ISO formatted strings.
+            my $date_due = (ref $issue->{date_due} eq "DateTime")
+                ? $issue->{date_due}->ymd : $issue->{date_due};
+            my $issuedate = (ref $issue->{issuedate} eq "DateTime")
+                ? $issue->{issuedate}->ymd : $issue->{issuedate};
+
             my $r = {
                 borrowernumber => $issue->{borrowernumber},
                 branchcode => $issue->{branchcode},
                 itemnumber => $issue->{itemnumber},
-                date_due => $issue->{date_due}->ymd,
-                issuedate => $issue->{issuedate}->ymd,
+                date_due => $date_due,
+                issuedate => $issuedate,
                 biblionumber => $issue->{biblionumber},
                 title => $issue->{title},
                 barcode => $issue->{barcode},
