@@ -97,9 +97,9 @@ sub get_issues {
             # Community master version returns DateTime objects but older
             # versions return dates as ISO formatted strings.
             my $date_due = (ref $issue->{date_due} eq "DateTime")
-                ? $issue->{date_due}->ymd : $issue->{date_due};
+                ? $issue->{date_due}->datetime : $issue->{date_due};
             my $issuedate = (ref $issue->{issuedate} eq "DateTime")
-                ? $issue->{issuedate}->ymd : $issue->{issuedate};
+                ? $issue->{issuedate}->datetime : $issue->{issuedate};
 
             my $r = {
                 borrowernumber => $issue->{borrowernumber},
