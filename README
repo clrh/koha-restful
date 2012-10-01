@@ -29,3 +29,9 @@ Koha installation directory:
     ln -s /path/to/koharest/opac/rest.pl /path/to/koha/opac/
 
 Important note: '/path/to/koharest' must be absolute path when creating symlink.
+
+Documentation:
+--------------
+
+To know the different webservices exposed, have a look to :
+$ perldoc opac/rest.pl
