@@ -102,17 +102,17 @@ sub rm_get_biblio_items_holdable_status {
     my $itemnumbers = C4::Items::get_itemnumbers_of($biblionumber);
     if ($itemnumbers->{$biblionumber}) {
         foreach my $itemnumber (@{ $itemnumbers->{$biblionumber} }) {
-            my $can_reserve;
+            my $is_holdable;
             if ($borrowernumber) {
-                $can_reserve = C4::Reserves::CanItemBeReserved($borrowernumber, $itemnumber);
+                my $can_reserve = C4::Reserves::CanItemBeReserved($borrowernumber, $itemnumber);
                 # This shouldn't be here. It should be in the C4::Reserves::CanItemBeReserved function. But that's how koha works.
-                my $infos = GetItemInfosOf($itemnumber);
-                $can_reserve = $can_reserve && !$infos->{$itemnumber}->{'notforloan'};
+                my $available = IsAvailableForItemLevelRequest($itemnumber);
+                $is_holdable = $can_reserve && $available;
             } else {
-                $can_reserve = 0;
+                $is_holdable = 0;
             }
             $response->{$itemnumber} = {
-                is_holdable => response_boolean($can_reserve),
+                is_holdable => response_boolean($is_holdable),
                 reasons => [],
             };
         }
