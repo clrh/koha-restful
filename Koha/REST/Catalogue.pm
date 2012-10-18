@@ -105,6 +105,9 @@ sub rm_get_biblio_items_holdable_status {
             my $can_reserve;
             if ($borrowernumber) {
                 $can_reserve = C4::Reserves::CanItemBeReserved($borrowernumber, $itemnumber);
+                # This shouldn't be here. It should be in the C4::Reserves::CanItemBeReserved function. But that's how koha works.
+                my $infos = GetItemInfosOf($itemnumber);
+                $can_reserve = $can_reserve && !$infos->{$itemnumber}->{'notforloan'};
             } else {
                 $can_reserve = 0;
             }
