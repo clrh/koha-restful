@@ -25,32 +25,29 @@ sub rm_get_biblio_items {
     my $biblionumber = $self->param('biblionumber');
 
     my $response = [];
-    my $itemnumbers = C4::Items::get_itemnumbers_of($biblionumber);
-    if ($itemnumbers->{$biblionumber}) {
-        foreach my $itemnumber (@{ $itemnumbers->{$biblionumber} }) {
-            my $item = C4::Items::GetItem($itemnumber);
-            my $holdingbranchname = C4::Branch::GetBranchName($item->{holdingbranch});
-            my $homebranchname = C4::Branch::GetBranchName($item->{homebranch});
-            my $r = {
-                itemnumber => $itemnumber,
-                holdingbranch => $item->{holdingbranch},
-                holdingbranchname => $holdingbranchname,
-                homebranch => $item->{homebranch},
-                homebranchname => $homebranchname,
-                withdrawn => $item->{wthdrawn},
-                notforloan => $item->{notforloan},
-                onloan => $item->{onloan},
-                location => $item->{location},
-                itemcallnumber => $item->{itemcallnumber},
-                date_due => $item->{date_due},
-                barcode => $item->{barcode},
-                itemlost => $item->{itemlost},
-                damaged => $item->{damaged},
-                stocknumber => $item->{stocknumber},
-                itype => $item->{itype},
-            };
-            push @$response, $r;
-        }
+    my @all_items = C4::Items::GetItemsInfo($biblionumber);
+    foreach my $item (@all_items) {
+        my $holdingbranchname = C4::Branch::GetBranchName($item->{holdingbranch});
+        my $homebranchname = C4::Branch::GetBranchName($item->{homebranch});
+        my $r = {
+            itemnumber => $item->{itemnumber},
+            holdingbranch => $item->{holdingbranch},
+            holdingbranchname => $holdingbranchname,
+            homebranch => $item->{homebranch},
+            homebranchname => $homebranchname,
+            withdrawn => $item->{wthdrawn},
+            notforloan => $item->{notforloan},
+            onloan => $item->{onloan},
+            location => $item->{location},
+            itemcallnumber => $item->{itemcallnumber},
+            date_due => $item->{datedue},
+            barcode => $item->{barcode},
+            itemlost => $item->{itemlost},
+            damaged => $item->{damaged},
+            stocknumber => $item->{stocknumber},
+            itype => $item->{itype},
+        };
+        push @$response, $r;
     }
 
     return format_response($self, $response);
