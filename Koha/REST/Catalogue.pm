@@ -48,6 +48,7 @@ sub rm_get_biblio_items {
                 damaged => $item->{damaged},
                 stocknumber => $item->{stocknumber},
                 itype => $item->{itype},
+                more_subfields_xml => $item->{more_subfields_xml},
             };
             push @$response, $r;
         }
