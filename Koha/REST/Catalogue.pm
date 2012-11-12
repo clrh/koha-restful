@@ -4,6 +4,7 @@ use base 'CGI::Application';
 use Modern::Perl;
 
 use Koha::REST::Response qw(format_response response_boolean);
+use C4::Context;
 use C4::Reserves;
 use C4::Items;
 use C4::Branch;
@@ -19,6 +20,15 @@ sub setup {
     );
 }
 
+my @items_columns;
+sub items_columns {
+    if (scalar @items_columns == 0) {
+        @items_columns = keys C4::Context->dbh->selectrow_hashref("
+            SELECT * FROM items LIMIT 1");
+    }
+    return @items_columns;
+}
+
 # return the list of all items for one biblio
 sub rm_get_biblio_items {
     my $self = shift;
@@ -30,23 +40,11 @@ sub rm_get_biblio_items {
         my $holdingbranchname = C4::Branch::GetBranchName($item->{holdingbranch});
         my $homebranchname = C4::Branch::GetBranchName($item->{homebranch});
         my $r = {
-            itemnumber => $item->{itemnumber},
-            holdingbranch => $item->{holdingbranch},
+            (map { +"$_" => $item->{$_} } items_columns),
             holdingbranchname => $holdingbranchname,
-            homebranch => $item->{homebranch},
             homebranchname => $homebranchname,
             withdrawn => $item->{wthdrawn},
-            notforloan => $item->{notforloan},
-            onloan => $item->{onloan},
-            location => $item->{location},
-            itemcallnumber => $item->{itemcallnumber},
             date_due => $item->{datedue},
-            barcode => $item->{barcode},
-            itemlost => $item->{itemlost},
-            damaged => $item->{damaged},
-            stocknumber => $item->{stocknumber},
-            itype => $item->{itype},
-            more_subfields_xml => $item->{more_subfields_xml},
         };
         push @$response, $r;
     }
