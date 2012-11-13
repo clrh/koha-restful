@@ -23,8 +23,8 @@ sub setup {
 my @items_columns;
 sub items_columns {
     if (scalar @items_columns == 0) {
-        @items_columns = keys C4::Context->dbh->selectrow_hashref("
-            SELECT * FROM items LIMIT 1");
+        @items_columns = keys %{C4::Context->dbh->selectrow_hashref("
+            SELECT * FROM items LIMIT 1")};
     }
     return @items_columns;
 }
