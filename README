@@ -4,31 +4,24 @@ Koha REST server
 Installation notes:
 -------------------
 
-A/ If you have a tarball
+Clone the repository:
 
-Simply extract files into Koha installation directory:
+    git clone git://git.biblibre.com/koha-restful.git $KOHA_REST
 
-    cd /path/to/koha
-    tar xzf koha-restful.tar.gz
+Create symlinks into the Koha source directory ($KOHA_SRC):
 
+    ln -s $KOHA_REST/Koha/REST $KOHA_SRC/Koha/
+    ln -s $KOHA_REST/opac/rest.pl $KOHA_SRC/opac/
+    # This one is optional. It contains unit tests.
+    ln -s $KOHA_REST/t/rest $KOHA_SRC/t/
 
-B/ If you want to install it as a git repository
+Important note: $KOHA_REST must be absolute path when creating symlinks.
 
-If Koha installation directory is not a git repository, you can just clone Koha
-REST server into it:
+Copy the config directory into the Koha configuration directory ($KOHA_ETC).
+It's the one that contains koha-conf.xml after installation (It's usually at
+$KOHA_ETC/koha-conf.xml)
 
-    cd /path/to/koha
-    git clone git://git.biblibre.com/koha-restful.git .
-
-Otherwise (Koha installation directory is a git repository), you have to clone
-koha REST server in another location and then symlink files and directories into
-Koha installation directory:
-
-    ln -s /path/to/koharest/etc/rest /path/to/koha/etc/
-    ln -s /path/to/koharest/Koha/REST /path/to/koha/Koha/
-    ln -s /path/to/koharest/opac/rest.pl /path/to/koha/opac/
-
-Important note: '/path/to/koharest' must be absolute path when creating symlink.
+    cp -r $KOHA_REST/etc/rest $KOHA_ETC
 
 Documentation:
 --------------

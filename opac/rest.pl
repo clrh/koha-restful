@@ -6,10 +6,12 @@
 
 use Modern::Perl;
 use YAML;
+use File::Basename;
 use CGI::Application::Dispatch;
 use List::MoreUtils qw(any);
 
-my $conf = YAML::LoadFile('../etc/rest/config.yaml');
+my $conf_path = dirname($ENV{KOHA_CONF});
+my $conf = YAML::LoadFile("$conf_path/rest/config.yaml");
 # First of all, let's test if the client IP is allowed to use our service
 # If the remote address is not allowed, redirect to 403
 my @AuthorizedIPs = $conf->{authorizedips} ? @{ $conf->{authorizedips} } : ();
