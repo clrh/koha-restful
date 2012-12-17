@@ -72,6 +72,7 @@ sub get_holds {
             itemnumber => $hold->{itemnumber},
             title => $biblio ? $biblio->{title} : '',
             barcode => $item ? $item->{barcode} : '',
+            itemcallnumber => $item ? $item->{itemcallnumber} : '',
             branchname => C4::Branch::GetBranchName($hold->{branchcode}),
             cancellationdate => $hold->{cancellationdate},
             found => $hold->{found},
@@ -101,6 +102,8 @@ sub get_issues {
             my $issuedate = (ref $issue->{issuedate} eq "DateTime")
                 ? $issue->{issuedate}->datetime : $issue->{issuedate};
 
+            my $item = C4::Items::GetItem($itemnumber);
+
             my $r = {
                 borrowernumber => $issue->{borrowernumber},
                 branchcode => $issue->{branchcode},
@@ -111,6 +114,7 @@ sub get_issues {
                 title => $issue->{title},
                 barcode => $issue->{barcode},
                 renewable => response_boolean($renewable),
+                itemcallnumber => $item->{itemcallnumber},
             };
             if ( (not $renewable) and $error) {
                 $r->{reasons_not_renewable} = $error;
