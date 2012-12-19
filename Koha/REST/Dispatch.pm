@@ -30,6 +30,10 @@ sub dispatch_args {
                 => { app => 'User', rm => 'get_holds' },
             'user/byid/:borrowernumber/issues[get]'
                 => { app => 'User', rm => 'get_issues_byid' },
+            'user/today'
+                => { app => 'User', rm => 'get_today' },
+            'user/all'
+                => { app => 'User', rm => 'get_all' },
             'user/:user_name/issues[get]'
                 => { app => 'User', rm => 'get_issues' },
             'biblio/:biblionumber/items[get]'

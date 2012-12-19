@@ -313,6 +313,56 @@ If the issue is not renewable, there is one additional key:
 
 =back
 
+=head3 GET user/today
+
+=over 2
+
+Get information about patrons enrolled today
+
+Required parameters:
+
+=over 2
+
+None
+
+=back
+
+Response:
+
+=over 2
+
+a JSON array containing all informations about patrons enrolled today and it's extended attributes
+
+=back
+
+=back
+
+=head3 GET user/all
+
+=over 2
+
+Get information about all patrons
+
+Required parameters:
+
+=over 2
+
+None
+
+=back
+
+Response:
+
+=over 2
+
+a JSON array containing all informations about all patrons, and their extended attributes
+
+Warning, this file will be large !!!
+
+=back
+
+=back
+
 =head2 Biblio
 
 =head3 GET biblio/:biblionumber/items

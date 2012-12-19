@@ -9,6 +9,7 @@ use C4::Circulation;
 use C4::Biblio;
 use C4::Items;
 use C4::Branch;
+use C4::Members;
 
 sub setup {
     my $self = shift;
@@ -17,6 +18,8 @@ sub setup {
         get_holds => 'rm_get_holds',
         get_issues_byid => 'rm_get_issues_byid',
         get_issues => 'rm_get_issues',
+        get_today => 'today',
+        get_all => 'all',
     );
 }
 
@@ -121,6 +124,28 @@ sub get_issues {
     }
 
     return $response;
+}
+
+sub today {
+    my $self = shift;
+    my $today_patrons = C4::Members::Search({'dateenrolled'=>C4::Dates->today('iso') });
+    foreach my $patron (@$today_patrons) {
+        my $attributes = C4::Members::Attributes::GetBorrowerAttributes($patron->{borrowernumber});
+        $patron->{attributes} = $attributes;
+    }
+
+    return format_response($self, $today_patrons);
+}
+
+sub all {
+    my $self = shift;
+    my $all_patrons = C4::Members::Search({});
+    foreach my $patron (@$all_patrons) {
+        my $attributes = C4::Members::Attributes::GetBorrowerAttributes($patron->{borrowernumber});
+        $patron->{attributes} = $attributes;
+    }
+    
+    return format_response($self, $all_patrons);
 }
 
 1;

@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 
 use Modern::Perl;
-use Test::More tests => 48;
+use Test::More tests => 52;
 use Test::MockModule;
 use Test::WWW::Mechanize::CGIApp;
 
@@ -75,6 +75,17 @@ foreach my $i (0,1) {
             "$path 'reasons_not_renewable' key is present if 'renewable' is false");
     }
 }
+
+## /user/today and /user/all
+$mech->get_ok('/user/today');
+$output = from_json($mech->response->content);
+
+is(ref $output, 'ARRAY', "/user/today response is an array of size ".(scalar @$output));
+
+$mech->get_ok('/user/all');
+$output = from_json($mech->response->content);
+
+is(ref $output, 'ARRAY', "/user/all response is an array of size ".(scalar @$output));
 
 # Mocked subroutines
 
