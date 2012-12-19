@@ -23,6 +23,9 @@ $KOHA_ETC/koha-conf.xml)
 
     cp -r $KOHA_REST/etc/rest $KOHA_ETC
 
+Install the following package:
+    libcgi-application-dispatch-perl
+
 Documentation:
 --------------
 
