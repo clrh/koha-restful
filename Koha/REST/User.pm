@@ -10,6 +10,8 @@ use C4::Biblio;
 use C4::Items;
 use C4::Branch;
 use C4::Members;
+use YAML;
+use File::Basename;
 
 sub setup {
     my $self = shift;
@@ -132,7 +134,16 @@ sub get_issues {
 
 sub today {
     my $self = shift;
-    my $today_patrons = C4::Members::Search({'dateenrolled'=>C4::Dates->today('iso') });
+    # read the config file, we will use the borrowerfields filter if they exist
+    my $conf_path = dirname($ENV{KOHA_CONF});
+    my $conf = YAML::LoadFile("$conf_path/rest/config.yaml");
+
+    my $today_patrons;
+    if ($conf->{borrowerfields} ) {
+        $today_patrons = C4::Members::Search({'dateenrolled'=>C4::Dates->today('iso') }, undef, undef, $conf->{borrowerfields}  );
+    } else {
+        $today_patrons = C4::Members::Search({'dateenrolled'=>C4::Dates->today('iso') } );
+    }
     foreach my $patron (@$today_patrons) {
         my $attributes = C4::Members::Attributes::GetBorrowerAttributes($patron->{borrowernumber});
         $patron->{attributes} = $attributes;
@@ -143,7 +154,17 @@ sub today {
 
 sub all {
     my $self = shift;
-    my $all_patrons = C4::Members::Search({});
+    # read the config file, we will use the borrowerfields filter if they exist
+    my $conf_path = dirname($ENV{KOHA_CONF});
+    my $conf = YAML::LoadFile("$conf_path/rest/config.yaml");
+
+    my $all_patrons;
+    if ($conf->{borrowerfields} ) {
+        $all_patrons = C4::Members::Search({}, undef, undef, $conf->{borrowerfields}  );
+    } else {
+        $all_patrons = C4::Members::Search({} );
+    }
+
     foreach my $patron (@$all_patrons) {
         my $attributes = C4::Members::Attributes::GetBorrowerAttributes($patron->{borrowernumber});
         $patron->{attributes} = $attributes;
