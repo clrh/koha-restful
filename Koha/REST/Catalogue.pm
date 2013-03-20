@@ -52,6 +52,158 @@ sub rm_get_biblio_items {
     return format_response($self, $response);
 }
 
+sub get_issuing_rule {
+    my ( $categorycode, $itemtype, $branchcode ) = @_;
+    $categorycode ||= "*";
+    $itemtype     ||= "*";
+    $branchcode   ||= "*";
+
+    # This configuration table defines the order of inheritance. We'll loop over it.
+    my @attempts = (
+        [ "*",           "*",       "*" ],
+        [ "*",           $itemtype, "*" ],
+        [ $categorycode, "*",       "*" ],
+        [ $categorycode, $itemtype, "*" ],
+        [ "*",           "*",       $branchcode ],
+        [ "*",           $itemtype, $branchcode ],
+        [ $categorycode, "*",       $branchcode ],
+        [ $categorycode, $itemtype, $branchcode ],
+    );
+
+    # This complex query returns a nested hashref, so we can access a rule using :
+    # my $rule = $$rules{$categorycode}{$itemtype}{$branchcode};
+    # this will be usefull in the inheritance computation code
+    my $dbh   = C4::Context->dbh;
+    my $rules = $dbh->selectall_hashref(
+        "SELECT * FROM issuingrules where branchcode IN ('*',?) and itemtype IN ('*', ?) and categorycode IN ('*',?)",
+        [ "branchcode", "itemtype", "categorycode" ],
+        undef, ( $branchcode, $itemtype, $categorycode )
+    );
+
+    # This block is for inheritance. It loops over rules returned by the
+    # previous query. If a value is found in a more specific rule, it replaces
+    # the old value from the more generic rule.
+    my $oldrule;
+    for my $attempt (@attempts) {
+        if ( my $rule = $$rules{ @$attempt[2] }{ @$attempt[1] }{ @$attempt[0] } ) {
+            if ($oldrule) {
+                for ( keys %$oldrule ) {
+                    if ( defined $rule->{$_} ) {
+                        $oldrule->{$_} = $rule->{$_};
+                    }
+                }
+            } else {
+                $oldrule = $rule;
+            }
+        }
+    }
+    if ($oldrule) {
+        return $oldrule;
+    } else {
+        return {
+            'itemtype'         => $itemtype,
+            'categorycode'     => $categorycode,
+            'branchcode'       => $branchcode,
+            'holdspickupdelay' => 0,
+
+            #     'maxissueqty'       => 0,
+            'renewalsallowed'   => 0,
+            'firstremind'       => 0,
+            'accountsent'       => 0,
+            'reservecharge'     => 0,
+            'fine'              => 0,
+            'restrictedtype'    => 0,
+            'rentaldiscount'    => 0,
+            'chargename'        => 0,
+            'finedays'          => 0,
+            'holdrestricted'    => 0,
+            'allowonshelfholds' => 0,
+            'reservesallowed'   => 0,
+            'chargeperiod'      => 0,
+
+            #     'issuelength'       => 0,
+            'renewalperiod' => 0,
+        };
+    }
+}
+
+# Replacement of C4::Reserves::CanBookBeReserved which do not check all that
+# must be checked
+sub biblio_is_holdable {
+    my ( $borrowernumber, $biblionumber, $branch ) = @_;
+
+    my $pending_issues = C4::Members::GetPendingIssues( $borrowernumber );
+    my $checked_out = grep { $$_{biblionumber} == $biblionumber } @$pending_issues;
+    if ($checked_out) {
+        return wantarray ? (0, { checked_out => 1 }) : 0;
+    }
+
+    # Check if borrower has already reserved this biblio
+    my @reserves = GetReservesFromBorrowernumber($borrowernumber);
+    my $reserved = grep { $_->{biblionumber} == $biblionumber } @reserves;
+    if ($reserved) {
+        return wantarray ? (0, { reserved => 1 }) : 0;
+    }
+
+    my $homeorholdingbranch = C4::Context->preference('HomeOrHoldingBranch');
+    my @items = C4::Items::GetItemsInfo($biblionumber);
+
+    if(defined $branch and $branch ne '') {
+        # Remove from list items of other branches and items which are
+        # not for loan
+        @items = map {
+            ( $_->{$homeorholdingbranch} eq $branch and not $_->{notforloan} )
+            ? $_
+            : ()
+        } @items;
+    }
+
+    if(not C4::Context->preference('AllowOnShelfHolds')) {
+        # If at least one item is available (not on loan), prevent reservation
+        my $member = C4::Members::GetMember(borrowernumber => $borrowernumber);
+        my $controlbranch = C4::Context->preference('ReservesControlBranch');
+        my $branchcode = ($controlbranch eq 'PatronLibrary')
+            ? $member->{branchcode}
+            : $branch;
+        my $itype;
+        if (not C4::Context->preference('item-level_itypes')) {
+            my ($biblioitem) = C4::Biblio::GetBiblioItemByBiblioNumber($biblionumber);
+            $itype = $biblioitem->{itemtype};
+        }
+        foreach my $item (@items) {
+            if(not $item->{onloan}) {
+                $itype //= $item->{itype};
+                if ($controlbranch eq 'ItemHomeLibrary') {
+                    $branchcode = $item->{homebranch};
+                }
+                my $ir = get_issuing_rule($member->{categorycode}, $itype, $branchcode);
+                if ($ir->{reservesallowed} > 0) {
+                    return wantarray ? (0, { item_available => 1 }) : 0;
+                }
+            }
+        }
+    }
+
+    my ($currentreserves,$maxreservesallowed) = (0, -1);
+    for my $item (@items){
+        my @list = CanItemBeReserved($borrowernumber,$item->{itemnumber});
+        if ($list[0] == 1){
+            return 1;
+        } else {
+            $currentreserves = $list[1]
+                if ($list[1] > $currentreserves);
+            $maxreservesallowed = $list[2]
+                if ($list[2] < $maxreservesallowed or $maxreservesallowed == -1);
+        }
+    }
+
+    my $reasons = {
+        currentreserves => $currentreserves,
+        maxreservesallowed => $maxreservesallowed
+    };
+    return wantarray ? (0, $reasons) : 0;
+}
+
 # check if a biblio is holdable
 sub rm_biblio_is_holdable {
     my $self = shift;
@@ -61,12 +213,12 @@ sub rm_biblio_is_holdable {
     my $borrowernumber = $q->param('borrowernumber');
     my $itemnumber = $q->param('itemnumber');
 
-    my $can_reserve;
+    my ($can_reserve, $reasons) = (undef, []);
     if ($borrowernumber) {
         if ($itemnumber) {
             $can_reserve = C4::Reserves::CanItemBeReserved($borrowernumber, $itemnumber);
         } else {
-            $can_reserve = C4::Reserves::CanBookBeReserved($borrowernumber, $biblionumber);
+            ($can_reserve, $reasons) = biblio_is_holdable($borrowernumber, $biblionumber);
         }
     } else {
         $can_reserve = 1;
@@ -74,7 +226,7 @@ sub rm_biblio_is_holdable {
 
     my $response = {
         is_holdable => response_boolean($can_reserve),
-        reasons => ($can_reserve) ? [] : [ "No reasons..." ],
+        reasons => ($can_reserve) ? [] : $reasons,
     };
     return format_response($self, $response);
 }
