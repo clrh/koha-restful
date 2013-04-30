@@ -9,7 +9,6 @@ use t::rest::lib::Mocks;
 use Test::More tests => 6;
 use Test::WWW::Mechanize::CGIApp;
 use JSON;
-use Data::Dumper;
 
 t::rest::lib::Mocks::mock_config;
 
@@ -19,10 +18,9 @@ $mech->app('Koha::REST::Dispatch');
 
 t::rest::lib::Mocks::mock_preference('AllowOnShelfHolds', '0');
 
-my $path = "/biblio/3/holdable?borrowernumber=5";
+my $path = "/item/7/holdable?user_name=23529001000463";
 $mech->get_ok($path);
 my $got = from_json( $mech->response->content );
-say Dumper $got;
 my $expected = {
     'is_holdable' => JSON::false,
     'reasons' => {
@@ -31,20 +29,15 @@ my $expected = {
 };
 is_deeply( $got, $expected, q{cannot reserve because already reserved} );
 
-
-$path = "/biblio/2/holdable?borrowernumber=5";
+$path = "/item/4/holdable?user_name=23529001000463";
 $mech->get_ok($path);
 $got = from_json( $mech->response->content );
 $expected = {
-    'is_holdable' => JSON::false,
-    'reasons' => {
-        checked_out => 1
-    },
+    'is_holdable' => JSON::true,
 };
 is_deeply( $got, $expected, q{cannot reserve because already checked out} );
 
-
-$path = "/biblio/4/holdable?borrowernumber=5";
+$path = "/item/5/holdable?user_name=23529001000463";
 $mech->get_ok($path);
 $got = from_json( $mech->response->content );
 $expected = {
@@ -53,9 +46,9 @@ $expected = {
         'item_available' => 1
     },
 };
-is_deeply( $got, $expected, q{cannot reserve because there are available items} );
+is_deeply( $got, $expected, q{cannot reserve because the item is available} );
 
-$path = "/biblio/1/holdable?borrowernumber=2";
+$path = "/item/7/holdable?user_name=23529000152273";
 $mech->get_ok($path);
 $got = from_json( $mech->response->content );
 $expected = {
@@ -66,7 +59,7 @@ is_deeply( $got, $expected, q{can reserve} );
 
 
 t::rest::lib::Mocks::mock_preference('AllowOnShelfHolds', '1');
-$path = "/biblio/3/holdable?borrowernumber=5";
+$path = "/item/7/holdable?user_name=23529001000463";
 $mech->get_ok($path);
 $got = from_json( $mech->response->content );
 $expected = {
@@ -78,31 +71,28 @@ $expected = {
 is_deeply( $got, $expected, q{cannot reserve because already reserved} );
 
 
-$path = "/biblio/2/holdable?borrowernumber=5";
-$mech->get_ok($path);
-$got = from_json( $mech->response->content );
-$expected = {
-    'is_holdable' => JSON::false,
-    'reasons' => {
-        checked_out => 1
-    },
-};
-is_deeply( $got, $expected, q{cannot reserve because already checked out} );
-
-
-$path = "/biblio/4/holdable?borrowernumber=5";
+$path = "/item/4/holdable?user_name=23529001000463";
 $mech->get_ok($path);
 $got = from_json( $mech->response->content );
 $expected = {
     'is_holdable' => JSON::true,
 };
-is_deeply( $got, $expected, q{cannot reserve because there are available items} );
+is_deeply( $got, $expected, q{cannot reserve because already checked out} );
 
-$path = "/biblio/1/holdable?borrowernumber=2";
+
+$path = "/item/5/holdable?user_name=23529001000463";
+$mech->get_ok($path);
+$got = from_json( $mech->response->content );
+$expected = {
+    'is_holdable' => JSON::true,
+    'reasons' => []
+};
+is_deeply( $got, $expected, q{cannot reserve because the item is available} );
+
+$path = "/item/7/holdable?user_name=23529000152273";
 $mech->get_ok($path);
 $got = from_json( $mech->response->content );
 $expected = {
     'is_holdable' => JSON::true,
 };
 is_deeply( $got, $expected, q{can reserve} );
-

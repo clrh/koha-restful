@@ -21,7 +21,7 @@ my $path = "/biblio/1/items";
 
 $mech->get_ok($path);
 my $got = from_json( $mech->response->content );
-my $expected = [
+my $expected =  [
     {
         'withdrawn' => '0',
         'biblioitemnumber' => '1',
@@ -117,7 +117,7 @@ my $expected = [
         'biblioitemnumber' => '1',
         'restricted' => undef,
         'wthdrawn' => '0',
-        'holdingbranchname' => 'Centerville',
+        'holdingbranchname' => 'Midway',
         'notforloan' => '0',
         'replacementpricedate' => '2013-04-30',
         'itemnumber' => '3',
@@ -126,14 +126,14 @@ my $expected = [
         'location' => undef,
         'itemcallnumber' => undef,
         'stack' => undef,
-        'date_due' => '',
+        'date_due' => '2013-05-03 23:59:00',
         'barcode' => '0000000003',
         'itemlost' => '0',
         'uri' => undef,
         'datelastseen' => '2013-04-30',
         'materials' => undef,
         'price' => undef,
-        'issues' => undef,
+        'issues' => '1',
         'homebranch' => undef,
         'replacementprice' => undef,
         'more_subfields_xml' => undef,
@@ -142,20 +142,20 @@ my $expected = [
         'booksellerid' => undef,
         'biblionumber' => '1',
         'renewals' => undef,
-        'holdingbranch' => 'CPL',
+        'holdingbranch' => 'MPL',
         'timestamp' => '2013-04-30 10:34:08',
         'damaged' => '0',
         'cn_sort' => '',
         'stocknumber' => undef,
         'reserves' => undef,
         'enumchron' => undef,
-        'datelastborrowed' => undef,
+        'datelastborrowed' => '2013-04-30',
         'dateaccessioned' => '2013-04-30',
         'copynumber' => undef,
         'permanent_location' => undef,
         'itype' => 'BK',
         'paidfor' => undef,
-        'onloan' => undef
+        'onloan' => '2013-05-03'
     }
 ];
 is_deeply( $got, $expected, q{biblio with 3 items} );
