@@ -5,7 +5,7 @@ use FindBin qw( $Bin );
 
 use lib "$Bin/../../..";
 use t::rest::lib::Mocks;
-use Test::More tests => 4;
+use Test::More tests => 5;
 use Test::MockModule;
 use Data::Dumper;
 use File::Slurp qw( read_file );
@@ -16,6 +16,7 @@ t::rest::lib::Mocks::mock_config;
 
 recreate_db();
 initialize_data();
+update_database();
 
 sub recreate_db {
     my $dbh = C4::Context->dbh;
@@ -38,5 +39,12 @@ sub initialize_data {
     for my $file ( glob $sqlfiles ) {
         is( system( qq{/usr/bin/mysql -u $user -p'$pass' -D $dbname < $file} ), 0, "Insert data into the database" );
     }
+
+}
+
+sub update_database {
+    my $src_path = C4::Context->config('intranetdir');
+    my $update_db_path = $src_path . '/installer/data/mysql/updatedatabase.pl';
+    is ( system( qq{ /usr/bin/perl $update_db_path } ), 0, "update db" );
 
 }
