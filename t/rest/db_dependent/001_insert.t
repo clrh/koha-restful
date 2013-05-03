@@ -28,6 +28,9 @@ sub recreate_db {
     is( $dbh->do(qq{
         CREATE DATABASE $dbname CHARACTER SET utf8 COLLATE utf8_bin
     }), 1, "create database $dbname" );
+
+    # Force C4::Context to recreate a new db handler
+    $dbh->disconnect;
 }
 
 sub initialize_data {
@@ -45,6 +48,13 @@ sub initialize_data {
 sub update_database {
     my $src_path = C4::Context->config('intranetdir');
     my $update_db_path = $src_path . '/installer/data/mysql/updatedatabase.pl';
-    is ( system( qq{ /usr/bin/perl $update_db_path } ), 0, "update db" );
 
+    my $file = `cat $update_db_path`;
+    $file =~ s/exit;//;
+    eval $file;
+    if ($@) {
+        fail("updatedatabase.pl process failed: $@");
+    } else {
+        pass("updatedatabase.pl process succeeded.");
+    }
 }
