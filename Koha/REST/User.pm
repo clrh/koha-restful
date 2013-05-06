@@ -66,7 +66,12 @@ sub get_holds {
     my $response = [];
     my @holds = C4::Reserves::GetReservesFromBorrowernumber($borrowernumber);
     foreach my $hold (@holds) {
-        my (undef, $biblio) = C4::Biblio::GetBiblio($hold->{biblionumber});
+        # Up to Koha 3.8 GetBiblio returns an array whose last element is the
+        # biblio hash.
+        # Starting with Koha 3.10 GetBiblio returns only the biblio hash.
+        # Getting the last element of what is returned by this sub allow to be
+        # compatible with all versions.
+        my $biblio = (C4::Biblio::GetBiblio($hold->{biblionumber}))[-1];
         my $item = C4::Items::GetItem($hold->{itemnumber});
         push @$response, {
             hold_id => $hold->{reserve_id},
