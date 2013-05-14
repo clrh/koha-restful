@@ -20,9 +20,18 @@ sub setup {
         get_holds => 'rm_get_holds',
         get_issues_byid => 'rm_get_issues_byid',
         get_issues => 'rm_get_issues',
+        get_issues_history_byid => 'rm_get_issues_history_byid',
+        get_issues_history => 'rm_get_issues_history',
         get_today => 'today',
         get_all => 'all',
     );
+}
+
+sub get_borrowernumer {
+    my ($userid) = @_;
+
+    my $borrower = C4::Members::GetMember(userid => $userid);
+    return $borrower->{borrowernumber};
 }
 
 sub rm_get_holds_byid {
@@ -35,8 +44,7 @@ sub rm_get_holds_byid {
 sub rm_get_holds {
     my $self = shift;
     my $user_name = $self->param('user_name');
-    my $borrower = C4::Members::GetMember(userid => $user_name);
-    my $borrowernumber = $borrower->{borrowernumber};
+    my $borrowernumber = get_borrowernumber($user_name);
 
     return format_response($self, get_holds($borrowernumber));
 }
@@ -51,8 +59,7 @@ sub rm_get_issues_byid {
 sub rm_get_issues {
     my $self = shift;
     my $user_name = $self->param('user_name');
-    my $borrower = C4::Members::GetMember(userid => $user_name);
-    my $borrowernumber = $borrower->{borrowernumber};
+    my $borrowernumber = get_borrowernumber($user_name);
 
     return format_response($self, get_issues($borrowernumber));
 }
@@ -135,6 +142,29 @@ sub get_issues {
     }
 
     return $response;
+}
+
+sub get_issues_history {
+    my ($borrowernumber) = @_;
+
+    my $issues = C4::Members::GetAllIssues($borrowernumber, 'issuestimestamp');
+    return $issues;
+}
+
+sub rm_get_issues_history {
+    my $self = shift;
+    my $user_name = $self->param('user_name');
+    my $borrower = C4::Members::GetMember(userid => $user_name);
+    my $borrowernumber = $borrower->{borrowernumber};
+
+    return format_response($self, get_issues_history($borrowernumber));
+}
+
+sub rm_get_issues_history_byid {
+    my $self = shift;
+    my $borrowernumber = $self->param('borrowernumber');
+
+    return format_response($self, get_issues_history($borrowernumber));
 }
 
 sub today {
