@@ -313,6 +313,54 @@ If the issue is not renewable, there is one additional key:
 
 =back
 
+=head3 GET user/:user_name/issues_history
+
+=over 2
+
+Get issues history for a user.
+
+Required parameters:
+
+=over 2
+
+=item * user_name: Patron username.
+
+=back
+
+Response:
+
+=over 2
+
+a JSON array that contains issues. Each issue is described by a hash.
+
+=back
+
+=back
+
+=head3 GET user/byid/:borrowernumber/issues_history
+
+=over 2
+
+Get issues history for a user.
+
+Required parameters:
+
+=over 2
+
+=item * borrowernumber: Patron borrowernumber.
+
+=back
+
+Response:
+
+=over 2
+
+a JSON array that contains issues. Each issue is described by a hash.
+
+=back
+
+=back
+
 =head3 GET user/today
 
 =over 2
