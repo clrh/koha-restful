@@ -31,3 +31,11 @@ Documentation:
 
 To know the different webservices exposed, have a look to :
 $ perldoc opac/rest.pl
+
+Version information:
+--------------------
+
+koha-restful has been tested with Koha 3.8 and 3.10.
+However Koha 3.8 needs additional patches for koha-restful to fully function:
+http://bugs.koha-community.org/bugzilla3/buglist.cgi?quicksearch=7065
+http://bugs.koha-community.org/bugzilla3/buglist.cgi?quicksearch=10185
