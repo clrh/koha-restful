@@ -12,16 +12,19 @@ use C4::Branch;
 use C4::Members;
 use YAML;
 use File::Basename;
+use JSON;
 
 sub setup {
     my $self = shift;
     $self->run_modes(
+        create_user => 'rm_create_user',
         get_holds_byid => 'rm_get_holds_byid',
         get_holds => 'rm_get_holds',
         get_issues_byid => 'rm_get_issues_byid',
         get_issues => 'rm_get_issues',
         get_today => 'today',
         get_all => 'all',
+        login_exists => 'rm_login_exists',
     );
 }
 
@@ -177,5 +180,24 @@ sub all {
     
     return format_response($self, $all_patrons);
 }
+
+# Does the given login exists in Koha?
+sub rm_login_exists {
+    my $self = shift;
+    my $login = $self->param('user_name');
+    return !Check_Userid($login, '');
+}
+
+# Creates a user
+sub rm_create_user {
+    my $self = shift;
+    my $q = $self->query;
+
+    my $jsondata = $q->param('data');
+    my $data = from_json($jsondata);
+    my $result = AddMember(%$data);
+    return $result;
+}
+
 
 1;
