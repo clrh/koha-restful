@@ -195,6 +195,10 @@ sub rm_create_user {
 
     my $jsondata = $q->param('data');
     my $data = from_json($jsondata);
+
+    # If no categorycode is provided, we use the default categorycode for self registration
+    $$data{'categorycode'} = C4::Context->preference('PatronSelfRegistrationDefaultCategory') unless $$data{'categorycode'};
+
     my $result = AddMember(%$data);
     return $result;
 }
