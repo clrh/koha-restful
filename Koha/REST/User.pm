@@ -185,7 +185,10 @@ sub all {
 sub rm_login_exists {
     my $self = shift;
     my $login = $self->param('user_name');
-    return !Check_Userid($login, '');
+    my $response = {
+        exist => response_boolean(!Check_Userid($login, '')),
+    };
+    return format_response($self, $response);
 }
 
 # Creates a user
@@ -200,7 +203,10 @@ sub rm_create_user {
     $$data{'categorycode'} = C4::Context->preference('PatronSelfRegistrationDefaultCategory') unless $$data{'categorycode'};
 
     my $result = AddMember(%$data);
-    return $result;
+    my $response = {
+        borrowernumber => $result,
+    };
+    return format_response($self, $response);
 }
 
 
