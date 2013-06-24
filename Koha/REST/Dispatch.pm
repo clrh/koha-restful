@@ -40,6 +40,10 @@ sub dispatch_args {
                 => { app => 'User', rm => 'get_all' },
             'user/:user_name/issues[get]'
                 => { app => 'User', rm => 'get_issues' },
+            'user/:user_name/exists[get]'
+                => { app => 'User', rm => 'login_exists' },
+            'user[post]'
+                => { app => 'User', rm => 'create_user' },
             'biblio/:biblionumber/items[get]'
                 => { app => 'Catalogue', rm => 'get_biblio_items' },
             'biblio/:biblionumber/holdable[get]'
