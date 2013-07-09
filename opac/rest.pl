@@ -427,6 +427,12 @@ Required parameters:
 
 =back
 
+Optional parameters:
+
+=over 2
+
+=item * reserves: 1 to retrieve the reserves for each item, 0 otherwise (default: 0)
+
 Response:
 
 =over 2
@@ -467,6 +473,8 @@ following keys:
 =item * stocknumber: item stocknumber.
 
 =item * itype: item type.
+
+=item * reserves: if optional parameter 'reserves' is set to 1, this key contains an array of all reserves for this item
 
 =back
 

@@ -33,8 +33,21 @@ sub items_columns {
 sub rm_get_biblio_items {
     my $self = shift;
     my $biblionumber = $self->param('biblionumber');
+    my $q = $self->query();
+    my $get_reserves = $q->param('reserves');
 
     my $response = [];
+
+    my %reserves;
+    if ($get_reserves) {
+        my $res = C4::Reserves::GetReservesFromBiblionumber($biblionumber);
+        if ($res) {
+            foreach my $reserve (@$res) {
+                push @{ $reserves{ $reserve->{itemnumber} } }, $reserve;
+            }
+        }
+    }
+
     my @all_items = C4::Items::GetItemsInfo($biblionumber);
     foreach my $item (@all_items) {
         my $holdingbranchname = C4::Branch::GetBranchName($item->{holdingbranch});
@@ -46,6 +59,13 @@ sub rm_get_biblio_items {
             withdrawn => $item->{wthdrawn},
             date_due => $item->{datedue},
         };
+
+        if (exists $reserves{ $item->{itemnumber} }) {
+            $r->{reserves} = $reserves{ $item->{itemnumber} };
+        } elsif ($get_reserves) {
+            $r->{reserves} = [];
+        }
+
         push @$response, $r;
     }
 
