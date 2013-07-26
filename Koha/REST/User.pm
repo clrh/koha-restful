@@ -30,7 +30,7 @@ sub setup {
     );
 }
 
-sub get_borrowernumer {
+sub get_borrowernumber {
     my ($userid) = @_;
 
     my $borrower = C4::Members::GetMember(userid => $userid);
