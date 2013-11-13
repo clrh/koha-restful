@@ -18,6 +18,7 @@ sub setup {
     my $self = shift;
     $self->run_modes(
         create_user => 'rm_create_user',
+        edit_user => 'rm_edit_user',
         get_holds_byid => 'rm_get_holds_byid',
         get_holds => 'rm_get_holds',
         get_issues_byid => 'rm_get_issues_byid',
@@ -239,5 +240,47 @@ sub rm_create_user {
     return format_response($self, $response);
 }
 
+sub rm_edit_user {
+    my $self = shift;
+    my $q = $self->query;
+
+    my $userid = $self->param('user_name');
+    my $borrower = C4::Members::GetMember(userid => $userid);
+
+    unless ($borrower) {
+        return format_error($self, '404 Not Found', {
+            error => "Borrower not found.",
+        });
+    }
+
+    my $borrowernumber = $borrower->{borrowernumber};
+
+    my $data = from_json($q->param('data'));
+    delete $data->{borrowernumber};
+
+    my $success = C4::Members::ModMember(borrowernumber => $borrowernumber, %$data);
+
+    my $response = {
+        success => response_boolean($success),
+    };
+    if ($success) {
+        $borrower = C4::Members::GetMember(borrowernumber => $borrowernumber);
+        my %modified;
+        foreach my $key (keys %$data) {
+            if (exists $borrower->{$key}) {
+                $modified{$key} = $borrower->{$key};
+            }
+        }
+
+        # Hide password hash, but leave key in hash.
+        if (defined $modified{password}) {
+            $modified{password} = undef;
+        }
+
+        $response->{modified_fields} = \%modified;
+    }
+
+    return format_response($self, $response);
+}
 
 1;

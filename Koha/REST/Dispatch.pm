@@ -44,6 +44,8 @@ sub dispatch_args {
                 => { app => 'User', rm => 'login_exists' },
             'user[post]'
                 => { app => 'User', rm => 'create_user' },
+            'user/:user_name[put]'
+                => { app => 'User', rm => 'edit_user' },
             'biblio/:biblionumber/items[get]'
                 => { app => 'Catalogue', rm => 'get_biblio_items' },
             'biblio/:biblionumber/holdable[get]'

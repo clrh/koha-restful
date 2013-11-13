@@ -411,6 +411,51 @@ Warning, this file will be large !!!
 
 =back
 
+=head3 PUT user/:user_name
+
+=over 2
+
+Modify user's informations
+
+Required parameters:
+
+=over 2
+
+=item * user_name: username (userid) of user to modify.
+
+=item * data: A JSON string which should be an object where keys are names of fields to modify and values are new values for those fields.
+Available fields: borrowernumber, cardnumber, surname, firstname, title,
+othernames, initials, streetnumber, streettype, address, address2, city, state,
+zipcode, country, email, phone, mobile, fax, emailpro, phonepro,
+B_streetnumber, B_streettype, B_address, B_address2, B_city, B_state,
+B_zipcode, B_country, B_email, B_phone, dateofbirth, branchcode, categorycode,
+dateenrolled, dateexpiry, gonenoaddress, lost, debarred, debarredcomment,
+contactname, contactfirstname, contacttitle, guarantorid, borrowernotes,
+relationship, ethnicity, ethnotes, sex, password, flags, userid, opacnote,
+contactnote, sort1, sort2, altcontactfirstname, altcontactsurname,
+altcontactaddress1, altcontactaddress2, altcontactaddress3, altcontactstate,
+altcontactzipcode, altcontactcountry, altcontactphone, smsalertnumber, privacy
+
+=back
+
+Response:
+
+=over 2
+
+A JSON object with the following keys:
+
+=over 2
+
+=item * success: A boolean that indicates if modification succeeded or not.
+
+=item * modified_fields: An object that indicates which fields were modified and the new value for each field.
+
+=back
+
+=back
+
+=back
+
 =head2 Biblio
 
 =head3 GET biblio/:biblionumber/items
@@ -475,6 +520,8 @@ following keys:
 =item * itype: item type.
 
 =item * reserves: if optional parameter 'reserves' is set to 1, this key contains an array of all reserves for this item
+
+=back
 
 =back
 
