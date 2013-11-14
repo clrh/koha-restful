@@ -256,28 +256,36 @@ sub rm_edit_user {
     my $borrowernumber = $borrower->{borrowernumber};
 
     my $data = from_json($q->param('data'));
-    delete $data->{borrowernumber};
+    my $response;
+    if ($data and ref $data eq "HASH") {
+        delete $data->{borrowernumber};
 
-    my $success = C4::Members::ModMember(borrowernumber => $borrowernumber, %$data);
+        my $success = C4::Members::ModMember(borrowernumber => $borrowernumber, %$data);
 
-    my $response = {
-        success => response_boolean($success),
-    };
-    if ($success) {
-        $borrower = C4::Members::GetMember(borrowernumber => $borrowernumber);
-        my %modified;
-        foreach my $key (keys %$data) {
-            if (exists $borrower->{$key}) {
-                $modified{$key} = $borrower->{$key};
+        $response = {
+            success => response_boolean($success),
+        };
+        if ($success) {
+            $borrower = C4::Members::GetMember(borrowernumber => $borrowernumber);
+            my %modified;
+            foreach my $key (keys %$data) {
+                if (exists $borrower->{$key}) {
+                    $modified{$key} = $borrower->{$key};
+                }
             }
-        }
 
-        # Hide password hash, but leave key in hash.
-        if (defined $modified{password}) {
-            $modified{password} = undef;
-        }
+            # Hide password hash, but leave key in hash.
+            if (defined $modified{password}) {
+                $modified{password} = undef;
+            }
 
-        $response->{modified_fields} = \%modified;
+            $response->{modified_fields} = \%modified;
+        }
+    } else {
+        $response = {
+            success => response_boolean(1),
+            modified_fields => {},
+        };
     }
 
     return format_response($self, $response);
