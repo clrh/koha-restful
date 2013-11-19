@@ -128,6 +128,7 @@ sub get_issues {
             my $r = {
                 borrowernumber => $issue->{borrowernumber},
                 branchcode => $issue->{branchcode},
+                holdingbranch => $item ? C4::Branch::GetBranchName($item->{holdingbranch}) : '',
                 itemnumber => $issue->{itemnumber},
                 date_due => $date_due,
                 issuedate => $issuedate,
