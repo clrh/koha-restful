@@ -411,6 +411,48 @@ Warning, this file will be large !!!
 
 =back
 
+=head3 POST user
+
+Create new user
+
+Required parameters:
+
+=over 2
+
+=item * data: A JSON string which should be an object where keys are names of
+fields and values are values for those fields.
+
+Available fields: cardnumber, surname, firstname, title,
+othernames, initials, streetnumber, streettype, address, address2, city, state,
+zipcode, country, email, phone, mobile, fax, emailpro, phonepro,
+B_streetnumber, B_streettype, B_address, B_address2, B_city, B_state,
+B_zipcode, B_country, B_email, B_phone, dateofbirth, branchcode, categorycode,
+dateenrolled, dateexpiry, gonenoaddress, lost, debarred, debarredcomment,
+contactname, contactfirstname, contacttitle, guarantorid, borrowernotes,
+relationship, ethnicity, ethnotes, sex, password, flags, userid, opacnote,
+contactnote, sort1, sort2, altcontactfirstname, altcontactsurname,
+altcontactaddress1, altcontactaddress2, altcontactaddress3, altcontactstate,
+altcontactzipcode, altcontactcountry, altcontactphone, smsalertnumber, privacy
+
+If categorycode is not given, system preference
+PatronSelfRegistrationDefaultCategory is used.
+
+=back
+
+Response:
+
+=over 2
+
+A JSON object with the following keys:
+
+=over 2
+
+=item * borrowernumber: Borrowernumber of newly created user.
+
+=back
+
+=back
+
 =head3 PUT user/:user_name
 
 =over 2
@@ -424,7 +466,7 @@ Required parameters:
 =item * user_name: username (userid) of user to modify.
 
 =item * data: A JSON string which should be an object where keys are names of fields to modify and values are new values for those fields.
-Available fields: borrowernumber, cardnumber, surname, firstname, title,
+Available fields: cardnumber, surname, firstname, title,
 othernames, initials, streetnumber, streettype, address, address2, city, state,
 zipcode, country, email, phone, mobile, fax, emailpro, phonepro,
 B_streetnumber, B_streettype, B_address, B_address2, B_city, B_state,
