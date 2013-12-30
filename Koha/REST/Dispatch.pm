@@ -56,6 +56,16 @@ sub dispatch_args {
                 => { app => 'Catalogue', rm => 'item_is_holdable' },
             'auth/change_password[put]'
                 => { app => 'Auth', rm => 'put_password' },
+            'suggestions[get]'
+                => { app => 'Suggestions', rm => 'get_suggestions' },
+            'suggestions/:suggestionid[get]'
+                => { app => 'Suggestions', rm => 'get_suggestion' },
+            'suggestions[post]'
+                => { app => 'Suggestions', rm => 'create_suggestion' },
+            'suggestions/:suggestionid[put]'
+                => { app => 'Suggestions', rm => 'edit_suggestion' },
+            'suggestions/:suggestionid[delete]'
+                => { app => 'Suggestions', rm => 'delete_suggestion' },
         ],
     };
 }
