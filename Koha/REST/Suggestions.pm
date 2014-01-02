@@ -108,8 +108,11 @@ sub rm_get_suggestion {
 
 sub rm_get_suggestions {
     my $self = shift;
+    my $q = $self->query;
 
-    my $suggestions = SearchSuggestion({});
+    my $filters = {$q->Vars};
+
+    my $suggestions = SearchSuggestion($filters);
 
     return format_response($self, $suggestions);
 }
