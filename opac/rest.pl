@@ -741,4 +741,182 @@ a JSON array which contains one hash with the following keys:
 
 =back
 
+=head2 Suggestions
+
+=head3 GET /suggestions
+
+=over 2
+
+Get all suggestions (optionally filtered using parameters)
+
+Optional parameters are the same as C4::Suggestions::SearchSuggestions. Please refer to documentation of this subroutine.
+
+Examples:
+
+=over 2
+
+=item * GET /suggestions (returns all suggestions)
+
+=item * GET /suggestions?suggestedby=3 (returns all suggestions suggested by borrower 3)
+
+=item * GET /suggestions?suggesteddate_from=2013-01-01&suggesteddate_to=2013-12-31 (returns all suggestions made in 2013)
+
+=back
+
+Response:
+
+=over 2
+
+a JSON array which contains one JSON object for each suggestion returned.
+
+=back
+
+=back
+
+=head3 GET /suggestions/:suggestionid
+
+=over 2
+
+Get one suggestion from its identifier.
+
+Required parameters:
+
+=over 2
+
+=item * suggestionid: Suggestion identifier
+
+=back
+
+Examples:
+
+=over 2
+
+=item * GET /suggestions/3
+
+=back
+
+Response:
+
+=over 2
+
+a JSON object which describes the suggestion.
+
+=back
+
+=back
+
+=head3 POST /suggestions
+
+=over 2
+
+Create a new suggestion.
+
+Required parameters:
+
+=over 2
+
+=item * data: a JSON-formatted string which describes the suggestion to create.
+Allowed keys are:
+suggestedby, suggesteddate, managedby, manageddate, acceptedby, accepteddate,
+rejectedby, rejecteddate, STATUS, note, author, title, copyrightdate,
+publishercode, date, volumedesc, publicationyear, place, isbn, mailoverseeing,
+biblionumber, reason, patronreason, budgetid, branchcode, collectiontitle,
+itemtype, quantity, currency, price, total
+
+=back
+
+Examples:
+
+=over 2
+
+=item * POST /suggestions
+
+POST: data={"suggestedby":"2", "title":"1984", "author":"George Orwell"}
+
+=back
+
+Response:
+
+=over 2
+
+a JSON object which describes the created suggestion.
+
+=back
+
+=back
+
+=head3 PUT /suggestions/:suggestionid
+
+=over 2
+
+Modify an existing suggestion.
+
+Required parameters:
+
+=over 2
+
+=item * suggestionid: Identifier of suggestion to modify
+
+=item * data: a JSON object which contains the fields to modify.
+Allowed keys are:
+suggestedby, suggesteddate, managedby, manageddate, acceptedby, accepteddate,
+rejectedby, rejecteddate, STATUS, note, author, title, copyrightdate,
+publishercode, date, volumedesc, publicationyear, place, isbn, mailoverseeing,
+biblionumber, reason, patronreason, budgetid, branchcode, collectiontitle,
+itemtype, quantity, currency, price, total
+
+=back
+
+Examples:
+
+=over 2
+
+=item * PUT /suggestions/1
+
+POST: data={"STATUS":"ACCEPTED"}
+
+=back
+
+Response:
+
+=over 2
+
+a JSON object which describes the modified suggestion.
+
+=back
+
+=back
+
+=head3 DELETE /suggestions/:suggestionid
+
+=over 2
+
+Delete an existing suggestion.
+
+Required parameters:
+
+=over 2
+
+=item * suggestionid: Identifier of suggestion to delete.
+
+=back
+
+Examples:
+
+=over 2
+
+=item * DELETE /suggestions/1
+
+=back
+
+Response:
+
+=over 2
+
+a JSON object with only one key: "success", which is true.
+
+=back
+
+=back
+
 =cut
