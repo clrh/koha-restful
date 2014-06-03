@@ -1,0 +1,527 @@
+Koha-restful 1.4 - Webservice documentation
+
+http://git.biblibre.com/?p=koha-restful;a=tree
+
+NAME
+    rest.pl
+
+DESCRIPTION
+    This script provide a RESTful webservice to interact with Koha.
+
+SERVICES
+  Infos
+   GET branches
+      Get the list of branches
+
+      Response:
+
+        a JSON array that contains branches. Each branch is described by a
+        hash with the following keys:
+
+        * code: internal branch identifier
+
+        * name: branch name
+
+  User
+   GET user/byid/:borrowernumber/holds
+      Get holds of a user, given his id.
+
+      Required parameters:
+
+      * borrowernumber: Patron id.
+
+      Response:
+
+        a JSON array that contains holds. Each hold is described by a hash
+        with the following keys:
+
+        * hold_id: internal hold identifier.
+
+        * rank: position of the patron in reserve queue.
+
+        * reservedate: date of reservation.
+
+        * biblionumber: internal biblio identifier.
+
+        * title: title of bibliographic record.
+
+        * branchcode: pickup library code.
+
+        * branchname: pickup library name.
+
+        * found: 'W' if item is awaiting for pickup.
+
+        If reserve is at item level, there are two additional keys:
+
+        * itemnumber: internal item identifier.
+
+        * barcode: barcode of item.
+
+   GET user/:user_name/holds
+      Get holds of a user, given his username.
+
+      Required parameters:
+
+      * user_name: Patron username.
+
+      Response:
+
+        a JSON array that contains holds. Each hold is described by a hash
+        with the following keys:
+
+        * hold_id: internal hold identifier.
+
+        * rank: position of the patron in reserve queue.
+
+        * reservedate: date of reservation.
+
+        * biblionumber: internal biblio identifier.
+
+        * title: title of bibliographic record.
+
+        * branchcode: pickup library code.
+
+        * branchname: pickup library name.
+
+        * found: 'W' if item is awaiting for pickup.
+
+        If reserve is at item level, there are two additional keys:
+
+        * itemnumber: internal item identifier.
+
+        * barcode: barcode of item.
+
+   GET user/byid/:borrowernumber/issues
+      Get issues of a user, given his id.
+
+      Required parameters:
+
+      * borrowernumber: Patron id.
+
+      Response:
+
+        a JSON array that contains issues. Each issue is described by a hash
+        with the following keys:
+
+        * borrowernumber: internal patron identifier.
+
+        * biblionumber: internal biblio identifier.
+
+        * title: title of bibliographic record.
+
+        * itemnumber: internal item identifier.
+
+        * barcode: barcode of item.
+
+        * branchcode: pickup library code.
+
+        * issuedate: date of issue.
+
+        * date_due: the date the item is due.
+
+        * renewable: is the issue renewable ? (boolean)
+
+        If the issue is not renewable, there is one additional key:
+
+        * reasons_not_renewable: 2 possible values:
+
+          * 'on_reserve': item is on hold.
+
+          * 'too_many': issue was renewed too many times.
+
+   GET user/:user_name/issues
+      Get issues of a user, given his username.
+
+      Required parameters:
+
+      * user_name: Patron username.
+
+      Response:
+
+        a JSON array that contains issues. Each issue is described by a hash
+        with the following keys:
+
+        * borrowernumber: internal patron identifier.
+
+        * biblionumber: internal biblio identifier.
+
+        * title: title of bibliographic record.
+
+        * itemnumber: internal item identifier.
+
+        * barcode: barcode of item.
+
+        * branchcode: pickup library code.
+
+        * issuedate: date of issue.
+
+        * date_due: the date the item is due.
+
+        * renewable: is the issue renewable ? (boolean)
+
+        If the issue is not renewable, there is one additional key:
+
+        * reasons_not_renewable: 2 possible values:
+
+          * 'on_reserve': item is on hold.
+
+          * 'too_many': issue was renewed too many times.
+
+   GET user/:user_name/issues_history
+      Get issues history for a user.
+
+      Required parameters:
+
+      * user_name: Patron username.
+
+      Response:
+
+        a JSON array that contains issues. Each issue is described by a
+        hash.
+
+   GET user/byid/:borrowernumber/issues_history
+      Get issues history for a user.
+
+      Required parameters:
+
+      * borrowernumber: Patron borrowernumber.
+
+      Response:
+
+        a JSON array that contains issues. Each issue is described by a
+        hash.
+
+   GET user/today
+      Get information about patrons enrolled today
+
+      Required parameters:
+
+        None
+
+      Response:
+
+        a JSON array containing all informations about patrons enrolled
+        today and it's extended attributes
+
+   GET user/all
+      Get information about all patrons
+
+      Required parameters:
+
+        None
+
+      Response:
+
+        a JSON array containing all informations about all patrons, and
+        their extended attributes
+
+        Warning, this file will be large !!!
+
+   POST user
+    Create new user
+
+    Required parameters:
+
+    * data: A JSON string which should be an object where keys are names of
+      fields and values are values for those fields.
+
+      Available fields: cardnumber, surname, firstname, title, othernames,
+      initials, streetnumber, streettype, address, address2, city, state,
+      zipcode, country, email, phone, mobile, fax, emailpro, phonepro,
+      B_streetnumber, B_streettype, B_address, B_address2, B_city, B_state,
+      B_zipcode, B_country, B_email, B_phone, dateofbirth, branchcode,
+      categorycode, dateenrolled, dateexpiry, gonenoaddress, lost, debarred,
+      debarredcomment, contactname, contactfirstname, contacttitle,
+      guarantorid, borrowernotes, relationship, ethnicity, ethnotes, sex,
+      password, flags, userid, opacnote, contactnote, sort1, sort2,
+      altcontactfirstname, altcontactsurname, altcontactaddress1,
+      altcontactaddress2, altcontactaddress3, altcontactstate,
+      altcontactzipcode, altcontactcountry, altcontactphone, smsalertnumber,
+      privacy
+
+      If categorycode is not given, system preference
+      PatronSelfRegistrationDefaultCategory is used.
+
+    Response:
+
+      A JSON object with the following keys:
+
+      * borrowernumber: Borrowernumber of newly created user.
+
+   PUT user/:user_name
+      Modify user's informations
+
+      Required parameters:
+
+      * user_name: username (userid) of user to modify.
+
+      * data: A JSON string which should be an object where keys are names
+        of fields to modify and values are new values for those fields.
+        Available fields: cardnumber, surname, firstname, title, othernames,
+        initials, streetnumber, streettype, address, address2, city, state,
+        zipcode, country, email, phone, mobile, fax, emailpro, phonepro,
+        B_streetnumber, B_streettype, B_address, B_address2, B_city,
+        B_state, B_zipcode, B_country, B_email, B_phone, dateofbirth,
+        branchcode, categorycode, dateenrolled, dateexpiry, gonenoaddress,
+        lost, debarred, debarredcomment, contactname, contactfirstname,
+        contacttitle, guarantorid, borrowernotes, relationship, ethnicity,
+        ethnotes, sex, password, flags, userid, opacnote, contactnote,
+        sort1, sort2, altcontactfirstname, altcontactsurname,
+        altcontactaddress1, altcontactaddress2, altcontactaddress3,
+        altcontactstate, altcontactzipcode, altcontactcountry,
+        altcontactphone, smsalertnumber, privacy
+
+      Response:
+
+        A JSON object with the following keys:
+
+        * success: A boolean that indicates if modification succeeded or
+          not.
+
+        * modified_fields: An object that indicates which fields were
+          modified and the new value for each field.
+
+  Biblio
+   GET biblio/:biblionumber/items
+      Get items of a bibliographic record.
+
+      Required parameters:
+
+      * biblionumber: internal biblio identifier.
+
+      Optional parameters:
+
+      * reserves: 1 to retrieve the reserves for each item, 0 otherwise
+        (default: 0)
+
+        Response:
+
+          a JSON array that contains items. Each item is described by a hash
+          with the following keys:
+
+          * itemnumber: internal item identifier.
+
+          * holdingbranch: holding library code.
+
+          * holdingbranchname: holding library name.
+
+          * homebranch: home library code.
+
+          * homebranchname: home library name.
+
+          * withdrawn: is the item withdrawn ?
+
+          * notforloan: is the item not available for loan ?
+
+          * onloan: date of loan if item is on loan.
+
+          * location: item location.
+
+          * itemcallnumber: item call number.
+
+          * date_due: due date if item is on loan.
+
+          * barcode: item barcode.
+
+          * itemlost: is item lost ?
+
+          * damaged: is item damaged ?
+
+          * stocknumber: item stocknumber.
+
+          * itype: item type.
+
+          * reserves: if optional parameter 'reserves' is set to 1, this key
+            contains an array of all reserves for this item
+
+   GET biblio/:biblionumber/holdable
+      Check if a biblio is holdable.
+
+      Required parameters:
+
+      * biblionumber: internal biblio identifier.
+
+      Optional parameters:
+
+      * borrowernumber: internal patron identifier. It is optional but
+        highly recommended, as no check is performed without it and a true
+        value is always returned.
+
+      * itemnumber: internal item identifier. If given, check is done on
+        item instead of biblio.
+
+      Response:
+
+        a JSON hash that contains the following keys:
+
+        * is_holdable: is the biblio holdable? (boolean)
+
+        * reasons: reasons why the biblio can't be reserved, if appropriate.
+          Actually there is no valid reasons...
+
+   GET biblio/:biblionumber/items_holdable_status
+      Check if items of a bibliographic record are holdable.
+
+      Required parameters:
+
+      * biblionumber: internal biblio identifier.
+
+      Optional parameters:
+
+      * borrowernumber: Patron borrowernumber. It is optional but highly
+        recommended. If not given, all items will be marked as not holdable.
+
+      * user_name: Patron username. Only used to find borrowernumber if this
+        one is not given.
+
+      Response:
+
+        a JSON hash where keys are itemnumbers. Each element of this hash
+        contain another hash whose keys are:
+
+        * is_holdable: is the item holdable ? (boolean)
+
+        * reasons: reasons why the biblio can't be reserved, if appropriate.
+          Actually there is no valid reasons...
+
+  Item
+   GET item/:itemnumber/holdable
+      Check if an item is holdable.
+
+      Required parameters:
+
+      * itemnumber: internal item identifier.
+
+      Optional parameters:
+
+      * user_name: patron username. It is optional but highly recommended.
+        If not given, item will be marked as not holdable.
+
+      Response:
+
+        a JSON hash with following keys:
+
+        * is_holdable: is item holdable ? (boolean)
+
+        * reasons: reasons why the biblio can't be reserved, if appropriate.
+          Actually there is no valid reasons...
+
+  Auth
+   PUT auth/change_password
+      Change user password.
+
+      Required parameters:
+
+      * user_name: patron username.
+
+      * new_password: wanted password.
+
+      Response:
+
+        a JSON array which contains one hash with the following keys:
+
+        * success: does the operation succeeded ?
+
+  Suggestions
+   GET /suggestions
+      Get all suggestions (optionally filtered using parameters)
+
+      Optional parameters are the same as
+      C4::Suggestions::SearchSuggestions. Please refer to documentation of
+      this subroutine.
+
+      Examples:
+
+      * GET /suggestions (returns all suggestions)
+
+      * GET /suggestions?suggestedby=3 (returns all suggestions suggested by
+        borrower 3)
+
+      * GET
+        /suggestions?suggesteddate_from=2013-01-01&suggesteddate_to=2013-12-
+        31 (returns all suggestions made in 2013)
+
+      Response:
+
+        a JSON array which contains one JSON object for each suggestion
+        returned.
+
+   GET /suggestions/:suggestionid
+      Get one suggestion from its identifier.
+
+      Required parameters:
+
+      * suggestionid: Suggestion identifier
+
+      Examples:
+
+      * GET /suggestions/3
+
+      Response:
+
+        a JSON object which describes the suggestion.
+
+   POST /suggestions
+      Create a new suggestion.
+
+      Required parameters:
+
+      * data: a JSON-formatted string which describes the suggestion to
+        create. Allowed keys are: suggestedby, suggesteddate, managedby,
+        manageddate, acceptedby, accepteddate, rejectedby, rejecteddate,
+        STATUS, note, author, title, copyrightdate, publishercode, date,
+        volumedesc, publicationyear, place, isbn, mailoverseeing,
+        biblionumber, reason, patronreason, budgetid, branchcode,
+        collectiontitle, itemtype, quantity, currency, price, total
+
+      Examples:
+
+      * POST /suggestions
+
+        POST: data={"suggestedby":"2", "title":"1984", "author":"George
+        Orwell"}
+
+      Response:
+
+        a JSON object which describes the created suggestion.
+
+   PUT /suggestions/:suggestionid
+      Modify an existing suggestion.
+
+      Required parameters:
+
+      * suggestionid: Identifier of suggestion to modify
+
+      * data: a JSON object which contains the fields to modify. Allowed
+        keys are: suggestedby, suggesteddate, managedby, manageddate,
+        acceptedby, accepteddate, rejectedby, rejecteddate, STATUS, note,
+        author, title, copyrightdate, publishercode, date, volumedesc,
+        publicationyear, place, isbn, mailoverseeing, biblionumber, reason,
+        patronreason, budgetid, branchcode, collectiontitle, itemtype,
+        quantity, currency, price, total
+
+      Examples:
+
+      * PUT /suggestions/1
+
+        POST: data={"STATUS":"ACCEPTED"}
+
+      Response:
+
+        a JSON object which describes the modified suggestion.
+
+   DELETE /suggestions/:suggestionid
+      Delete an existing suggestion.
+
+      Required parameters:
+
+      * suggestionid: Identifier of suggestion to delete.
+
+      Examples:
+
+      * DELETE /suggestions/1
+
+      Response:
+
+        a JSON object with only one key: "success", which is true.
+
